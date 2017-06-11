@@ -1,0 +1,70 @@
+#! /bin/bash
+
+echo "------ IoTivity 설치 --------" 
+
+echo "------ Update 설치 ----------"
+sudo apt-get update
+sudo apt-get upgrade
+
+echo "------ git 설치 ----------"
+sudo apt-get --yes install git
+
+echo "------ scons 설치 ----------"
+sudo apt-get --yes install scons
+
+echo "------ G++ 설치 ----------"
+sudo apt-get --yes install build-essential g++
+sudo apt-get --yes install python-dev autotools-dev libicu-dev build-essential libbz2-dev
+
+echo "------ pkg-config 설치 ----"
+sudo apt-get --yes install pkg-config
+
+echo "------ uuid-dev 설치 ----"
+sudo apt-get --yes install uuid-dev
+
+echo "------ libglib2 설치 ----"
+sudo apt-get --yes install libglib2.0-dev
+
+echo "------ SqlLite 설치 ----"
+sudo apt-get --yes install sqlite3 libsqlite3-dev
+
+echo "------- dh-autoreconf 설치 --------"
+sudo apt-get --yes install dh-autoreconf
+
+echo "------- libcurl4 설치 --------"
+sudo apt-get --yes install libcurl4-openssl-dev
+
+echo "-------- doxygen 설치 --------"
+sudo apt-get --yes install doxygen
+
+echo "--------- boost 설치 ---------"
+mkdir ~/boost_1_64
+cd ~/boost_1_64
+wget https://dl.bintray.com/boostorg/release/1.64.0/source/boost_1_64_0.tar.gz
+tar xzvf boost_1_64_0.tar.gz
+cd boost_1_64_0
+./bootstrap.sh --with-libraries=system,filesystem,date_time,thread,regex,log,iostreams,program_options --prefix=/usr/local
+sudo ./b2 instal
+
+echo "--------git에서 iotivity를 내려받습니다.-------"
+echo "--------     git폴더를 생성합니다. -------"
+mkdir ~/git
+cd ~/git
+git clone https://github.com/iotivity/iotivity.git
+cd iotivity
+git clone https://github.com/01org/tinycbor.git extlibs/tinycbor/tinycbor -b v0.4.1
+git clone https://github.com/ARMmbed/mbedtls.git extlibs/mbedtls/mbedtls -b mbedtls-2.4.0
+
+test=$(arch)
+
+if [ "$test" == "arm7vl" ] 
+then 
+   echo "라즈베리파이 사용자입니다."
+   scons TARGET_ARCH=arm
+else
+   echo "$test 사용자입니다."
+   scons
+fi 
+   echo "설치가 완료되었습니다."
+
+
